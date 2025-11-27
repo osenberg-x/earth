@@ -4,16 +4,21 @@ use bevy::{
     prelude::*,
     render::render_resource::{Extent3d, TextureDimension, TextureFormat},
 };
+use std::f32::consts::PI;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_systems(Startup, setup)
+        .add_systems(Update, rotate)
         .run();
 }
 
 #[derive(Component)]
 struct Earth;
+
+// const SHAPE_X_EXTENT: f32 = 14.0;
+// const Z_EXTENT: f32 = 5.0;
 
 fn setup(
     mut commands: Commands,
@@ -26,14 +31,20 @@ fn setup(
         ..default()
     });
 
-    let shape = meshes.add(Sphere::new(2.0).mesh().uv(32, 18));
+    let shape = meshes.add(Sphere::new(4.0).mesh().uv(32, 18));
 
     commands.spawn((
         Mesh3d(shape),
         MeshMaterial3d(earth_material.clone()),
-        Transform::default(),
+        Transform::default().with_rotation(Quat::from_rotation_x(-PI / 1.5859)),
         Earth,
     ));
+    // commands.spawn((
+    //     Mesh3d(shape),
+    //     MeshMaterial3d(earth_material.clone()),
+    //     Transform::default(),
+    //     Earth,
+    // ));
 
     commands.spawn((
         PointLight {
@@ -43,7 +54,7 @@ fn setup(
             shadow_depth_bias: 0.2,
             ..default()
         },
-        Transform::from_xyz(8.0, 16.0, 8.0)
+        Transform::from_xyz(-10.0, 16.0, 8.0)
     ));
 
     commands.spawn((
@@ -78,4 +89,10 @@ fn uv_debug_texture() -> Image {
         TextureFormat::Rgba8UnormSrgb,
         RenderAssetUsages::RENDER_WORLD,
     )
+}
+
+fn rotate(mut query: Query<&mut Transform, With<Earth>>, time: Res<Time>) {
+    for mut transform in &mut query {
+        transform.rotate_y(time.delta_secs() / 2.0);
+    }
 }
