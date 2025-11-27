@@ -36,7 +36,9 @@ fn setup(
     commands.spawn((
         Mesh3d(shape),
         MeshMaterial3d(earth_material.clone()),
-        Transform::default().with_rotation(Quat::from_rotation_x(-PI / 1.5859)),
+        Transform::default()
+            .with_scale(Vec3::new(1., 1., 1.05))
+            .with_rotation(Quat::from_rotation_x(-PI / 1.5859)),
         Earth,
     ));
     // commands.spawn((
@@ -54,7 +56,7 @@ fn setup(
             shadow_depth_bias: 0.2,
             ..default()
         },
-        Transform::from_xyz(-10.0, 16.0, 8.0)
+        Transform::from_xyz(-10.0, 16.0, 8.0),
     ));
 
     commands.spawn((
