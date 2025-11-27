@@ -56,7 +56,7 @@ fn setup(
             shadow_depth_bias: 0.2,
             ..default()
         },
-        Transform::from_xyz(-10.0, 16.0, 8.0),
+        Transform::from_xyz(0.0, 16.0, 8.0),
     ));
 
     commands.spawn((
