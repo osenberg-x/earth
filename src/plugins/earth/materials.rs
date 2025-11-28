@@ -3,6 +3,7 @@ use bevy::{
     render::render_resource::*,
     reflect::TypePath,
     asset::Asset,
+    shader::ShaderRef,
 };
 
 #[derive(ShaderType, Clone, Copy, Debug)]

@@ -8,6 +8,9 @@ use std::f32::consts::PI;
 
 pub mod config;
 
+mod plugins;
+use plugins::earth::EarthPlugin;
+
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
