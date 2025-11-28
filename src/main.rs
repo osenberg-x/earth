@@ -11,6 +11,9 @@ pub mod config;
 mod plugins;
 use plugins::earth::EarthPlugin;
 
+#[derive(Component)]
+pub struct Sun;
+
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
