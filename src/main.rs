@@ -6,6 +6,8 @@ use bevy::{
 };
 use std::f32::consts::PI;
 
+pub mod config;
+
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
