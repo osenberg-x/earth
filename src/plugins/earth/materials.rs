@@ -13,6 +13,19 @@ pub struct SunUniform {
     pub _padding: f32,
 }
 
+// atmosphere uniform data
+#[derive(ShaderType, Copy, Clone, Debug)]
+#[repr(C)]
+pub struct AtmosphereUniform {
+    pub sun_direction: Vec3,
+    pub camera_position: Vec3,
+    pub rayleigh_coeff: Vec3,
+    pub mie_coeff: f32,
+    pub sun_intensity: f32,
+    pub atomosphere_radius: f32,
+    pub _padding: f32,
+}
+
 #[derive(Asset, TypePath, AsBindGroup, Debug, Clone)]
 pub struct EarthMaterial {
     #[texture(0)]
@@ -41,5 +54,53 @@ impl Material for EarthMaterial {
 
     fn alpha_mode(&self) -> AlphaMode {
         AlphaMode::Opaque
+    }
+}
+
+#[derive(Asset, TypePath, AsBindGroup, Debug, Clone)]
+pub struct AtmosphereMaterial {
+    #[uniform(0)]
+    pub atmosphere_uniform: AtmosphereUniform,
+}
+
+impl Material for AtmosphereMaterial {
+    fn fragment_shader() -> ShaderRef {
+        "shaders/atmosphere.wgsl".into()
+    }
+
+    fn alpha_mode(&self) -> AlphaMode {
+        AlphaMode::Blend
+    }
+
+    fn specialize(
+            pipeline: &bevy::pbr::MaterialPipeline,
+            descriptor: &mut RenderPipelineDescriptor,
+            layout: &bevy::mesh::MeshVertexBufferLayoutRef,
+            key: bevy::pbr::MaterialPipelineKey<Self>,
+        ) -> Result<(), SpecializedMeshPipelineError> {
+        descriptor.primitive.cull_mode = None;
+        Ok(())
+    }
+}
+
+#[derive(Asset, TypePath, AsBindGroup, Debug, Clone)]
+pub struct CloudMaterial {
+    #[texture(0)]
+    #[sampler(1)]
+    pub cloud_texture: Handle<Image>,
+    #[uniform(2)]
+    pub sun_uniform: SunUniform,
+    // runtime adjustment
+    #[uniform(3)]
+    pub cloud_opacity: f32,
+}
+
+impl Material for CloudMaterial {
+    fn fragment_shader() -> ShaderRef {
+        "shaders/cloud.wgsl".into()
+    }
+
+    fn alpha_mode(&self) -> AlphaMode {
+        AlphaMode::Blend
     }
 }
