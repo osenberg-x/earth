@@ -33,4 +33,37 @@ fn calculate_sphere_tangent_space(world_pos: vec3<f32>, uv: vec2<f32>) -> mat3x3
 
     let longitude = (uv.x * 2.0 - 1.0) * PI;
     let latitude = (0.5 - uv.y) * PI;
+
+    // calculate tangent
+    // direction of increasing longitude
+    let tangent = vec3<f32>(
+        -sin(longitude),
+        0.0,
+        cos(longitude),
+    );
+
+    // calculate bitangent
+    // direction of increasing latitude
+    let bitangent = vec3<f32>(
+        -cos(longitude) * sin(latitude),
+        cos(latitude),
+        -sin(longitude) * cos(latitude)
+    );
+
+    let normal = point_on_sphere;
+
+    return mat3x3<f32>(
+        normalize(tangent),
+        normalize(bitangent),
+        normal,
+    );
+}
+
+// sample and decode normal
+fn sample_normal_map_shpere(uv: vec2<f32>, world_pos: vec3<f32>) -> vec3<f32> {
+    // get the mesh normal
+    let mesh_normal = normalize(world_pos);
+
+    // sample normal map
+    let normal_sample = textureSample(normal_map, normal_map_sampler, uv).rgb;
 }
