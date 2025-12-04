@@ -66,4 +66,25 @@ fn sample_normal_map_shpere(uv: vec2<f32>, world_pos: vec3<f32>) -> vec3<f32> {
 
     // sample normal map
     let normal_sample = textureSample(normal_map, normal_map_sampler, uv).rgb;
+
+    let detail_normal = normal_sample * 2.0 - 1.0;
+    let tbn_matrix = calculate_sphere_tangent_space(world_pos, uv);
+
+    // transform detail normal to world space
+    let world_detail_normal = tbn_matrix * detail_normal;
+
+    // u can control normal strength here
+    let blended_normal = normalize(mesh_normal + world_detail_normal * 0.32);
+
+    return blended_normal;
+}
+
+// calculate specular value at a given position
+fn calculate_specular(world_normal: vec3<f32>, light_dir: vec3<f32>, view_dir: vec3<f32>, roughness: f32, specular_strength: f32) -> f32 {
+    let halfway = normalize(light_dir + view_dir);
+    let shininess = mix(512.0, 1.0, roughness);
+
+    // calculate specular component
+    let spec = pow(max(dot(world_normal, halfway), 0.0), shininess);
+    return spec * specular_strength;
 }
